@@ -14,11 +14,24 @@
 
 using boost::asio::ip::tcp;
 
-constexpr size_t image_size = 100*100;
+constexpr size_t image_size = 486*366;
 
 void save_image(char* data, size_t len)
 {
-  // TODO
+
+  int fd;
+
+  fd = open("copycat.jpg", O_WRONLY | O_CREAT, 0644);
+
+  if(fd < 0){
+      std::cout << "Error, not able to create file" << std::endl;
+
+      return;
+  }
+
+  write(fd, data, len);
+
+
 }
 
 int main(int argc, char* argv[])
