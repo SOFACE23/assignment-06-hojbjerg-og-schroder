@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/image_server.dir/src/image_server.cpp.o -o image_server  -lpthread 

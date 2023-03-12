@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/image_client.dir/src/image_client.cpp.o -o image_client  -lpthread 
