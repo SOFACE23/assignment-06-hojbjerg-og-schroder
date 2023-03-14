@@ -21,39 +21,43 @@ int main(int argc, char* argv[])
   //Try block, dette har samme funktion som i daytime_server
   try
   {
-    //Hvis argc (socket nummer?) ikke er lig 2, bliver programmet stoppet.
-    //Da det ikke ikke stemmer overens med den host som klienten prøver at forbinde til.
     if (argc != 2)
     {
       std::cerr << "Usage: client <host>" << std::endl;
       return 1;
     }
-  
+
+    //Laver en io_context variabel 
     boost::asio::io_context io_context;
 
+    //Laver en resovler som har io_context som input
     tcp::resolver resolver(io_context);
+    //Definer endpoint, der siger hvilken server der skal forbindes til
     tcp::resolver::results_type endpoints =
       resolver.resolve(argv[1], "daytime");
 
-    //Laver en socket, som i server
+    //Laver en socket med io_context som input
     tcp::socket socket(io_context);
-    //Bruger socket og endpoint til at forbinde til server
+    
+    //Forbinder til endpoint med den socket der er blevet difineret
     boost::asio::connect(socket, endpoints);
 
     //Endless loop
     while(true)
     {
+      //Laver et array variabel
       boost::array<char, 128> buf;
+      //Laver en error msg variabel
       boost::system::error_code error;
 
+      //Definer længden af day_time string
       size_t len = socket.read_some(boost::asio::buffer(buf), error);
 
       //If funktion der tjekker for errors
       if (error == boost::asio::error::eof)
-        //Hvis filen er læst til ende bliver programmet stoppet
         break; // Connection closed cleanly by peer.
       else if (error)
-        //Ellers
+        //Ellers bliver error'en smidt på en stack som catch kan bruge til at skrive fejlen
         throw boost::system::system_error(error); // Some other error.
 
       std::cout.write(buf.data(), len);
@@ -61,6 +65,7 @@ int main(int argc, char* argv[])
   }
   catch (std::exception& e)
   {
+    //Skriver error fra throw i try-blocken
     std::cerr << e.what() << std::endl;
   }
 

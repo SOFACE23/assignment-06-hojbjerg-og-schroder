@@ -33,29 +33,29 @@ int main()
   //Prommet for afvide den skal prøve disse linjer af koder i instruktionen 
   try
   {
-    //Laver en var som indeholder det input/output som serveren skal sende/InDdhØsTe
+    //Laver en io_context som skal bruges til at forbinde til serveren
     boost::asio::io_context io_context;
-    //Laver en acceptor var som io_context input og skal bruge et endpoint(socket) som input
+    //Laver en acceptor som bruger v4 protokol og port 13 (typisk for processing time)
     tcp::acceptor acceptor(io_context, tcp::endpoint(tcp::v4(), 13));
 
     //Et loop der kører for evigt indtil programmet slukkes
     while (true)
     {
-      //Laver en tcp::socket variabel som hedder socket, som tager io_context som input
+      //Laver en socket med io_context
       tcp::socket socket(io_context);
-      //Skal accepter en forbinelse med klienten og få endpoint
+      //Skal accepter socket som håndter information for serveren
       acceptor.accept(socket);
 
       //Gemmer content af make_daytime_string funktionen i message 
       std::string message = make_daytime_string();
 
-      //Laver en error code som programmet bare skal ignorer, da write funktionen skal bruge en error msg som input
+      //Laver en error msg var
       boost::system::error_code ignored_error;
-      //Skriver message og ignored_error til socket
+      //Skriver message til server, samt socket og error msg
       boost::asio::write(socket, boost::asio::buffer(message), ignored_error);
     }
   }
-  //Vis intet i try-blocken virker, skal programmet printe hvor i blocken det gik galt
+  //Viser hvilken fejl der skete i try-blocken (hvis der skete en fejl)
   catch (std::exception &e)
   {
     std::cerr << e.what() << std::endl;

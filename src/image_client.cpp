@@ -11,29 +11,34 @@
 #include <iostream>
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
+#include <fstream>
 
 using boost::asio::ip::tcp;
 
-constexpr size_t image_size = 486*366;
+//image størrrelse i bytes
+constexpr size_t image_size = 17618;
 
 void save_image(char* data, size_t len)
 {
 
-  int fd;
+  //opretter fil
+  std::ofstream file;
 
-  fd = open("copycat.jpg", O_WRONLY | O_CREAT, 0644);
+  //åbner/laver filen "copycat"
+  file.open("copycat.jpg");
 
-  if(fd < 0){
-      std::cout << "Error, not able to create file" << std::endl;
-
-      return;
+  //Køre hele arryet af bytes igennem
+  for(int i = 0; i < len; i++){
+    //Skriver data til filen
+    file << data[i];
   }
 
-  write(fd, data, len);
-
+  //Lukker filen
+  file.close();
 
 }
 
+//Mange af kommentarene fra daytime_client beskriver også hvad der sker her
 int main(int argc, char* argv[])
 {
   try

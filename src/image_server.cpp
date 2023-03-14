@@ -12,14 +12,35 @@
 #include <iostream>
 #include <string>
 #include <boost/asio.hpp>
+#include <vector>
+#include <fstream>
 
 using boost::asio::ip::tcp;
 
-std::vector<uint8_t> get_image()
+std::vector<uint8_t> get_image(const char* file)
 {
-  return std::vector<uint8_t>();
+  //Laver en variabel der skal indeholde længden af filen
+  std::streampos size;
+  //Tager filen og specifier den som en binary file 
+  std::ifstream binaryFile(file, std::ifstream::binary);
+
+  //angiveeer længden an filen
+  binaryFile.seekg(0, binaryFile.end);
+  size = binaryFile.tellg();
+  binaryFile.seekg(0, binaryFile.beg);
+
+  //laver data som indeholder størrelsen som en vektor
+  std::vector<uint8_t> data(size);
+
+  //læser filen
+  binaryFile.read((char*) &data[0], size);
+
+  //Returner binary dataen
+  return data;
+  
 }
 
+//Mange af kommentarene fra daytime_server beskriver også hvad der sker her
 int main()
 {
   try
@@ -33,7 +54,7 @@ int main()
       tcp::socket socket(io_context);
       acceptor.accept(socket);
 
-      auto message = get_image();
+      auto message = get_image("cat.jpg");
 
       boost::system::error_code ignored_error;
       boost::asio::write(socket, boost::asio::buffer(message), ignored_error);
